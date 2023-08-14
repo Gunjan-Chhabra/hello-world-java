@@ -1,16 +1,24 @@
-jobs: 
-  deploy: 
-    name: deploy to ec2
+name: Push-to-EC2
+
+# Trigger deployment only on push to master branch
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  deploy:
+    name: Deploy to EC2 on master branch push
     runs-on: ubuntu-latest
 
-    steps: 
-      - name: checkout the file
+    steps:
+      - name: Checkout the files
         uses: actions/checkout@v2
 
-      - name: Deploy to server 1
+      - name: Deploy to Server 1
         uses: easingthemes/ssh-deploy@main
-        env: 
-          SSH_PRIVATE_KEY: ${ {secrets.PHPKeyPair}}
-          REMOTE_HOST: ${ {secrets.ec2-54-90-73-225.compute-1.amazonaws.com}}
-          REMOTE_USER: ${ {secrets.ec2-user}}
-          TARGET: ${ {secrets./var/www/html}}
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.EC2_SSH_KEY }}
+          REMOTE_HOST: ${{ secrets.HOST_DNS }}
+          REMOTE_USER: ${{ secrets.USERNAME }}
+          TARGET: /var/www/html
